@@ -194,6 +194,50 @@ Allow traffic from the both VPC CIDR block in Security Group.
 ### Non-transitive routing
 
 ![Not Transitive VPC](./img/not-transitive.png)
-VPC peering are not transitive means only VPC A & VPC C | VPC B & VPC C can communicate if VPC A & VPC B both connected to VPC C still VPC A & VPC B can not communicate with each other if you want you need to create a peering conectivity between VPC A & VPC B.
+VPC peering are not transitive means only VPC A & VPC C | VPC B & VPC C can communicate even if VPC A & VPC B both are connected to VPC C still VPC A & VPC B can not communicate with each other if you want you need to create a peering conectivity between VPC A & VPC B.
 
 other limitations, complex mesh architecture at scale & no centralized routing control.
+
+# AWS Transit Gateway (TGW)
+
+As environments grow, managing connectivity using VPC Peering becomes complex and difficult to scale.
+AWS Transit Gateway (TGW) solves this problem by acting as a central networking hub that connects multiple VPCs and on-premises networks.
+
+Transit Gateway enables a hub-and-spoke architecture, simplifying routing and improving scalability.
+
+### What is a Transit Gateway?
+
+An AWS Transit Gateway is a regional networking service that connects:
+
+- Multiple VPCs
+- VPN connections
+- On-premises networks
+- AWS Direct Connect gateways
+
+It works as a central router for your cloud network, simplifying connectivity and enabling scalable network architecture.
+
+## Why Not Use Only VPC Peering?
+
+When multiple VPCs need communication, VPC Peering creates a mesh topology.
+
+Example (Peering Mesh Problem)
+```text
+VPC A <--> VPC B
+VPC A <--> VPC C
+VPC B <--> VPC C
+```
+
+Connections increase rapidly as VPC count grows.
+
+| Number of VPCs | Required Peerings |
+| -------------- | ----------------- |
+| 2              | 1                 |
+| 3              | 3                 |
+| 5              | 10                |
+| 10             | 45                |
+
+Consumes lot of time & becomes operationally difficult.
+
+### Transit Gateway Solution
+
+Instead of connecting VPCs to each other, all VPCs connect to one central gateway.
